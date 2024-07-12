@@ -48,7 +48,6 @@ public class ECKeyPair {
     }
 
     public String getHexPubKey() {
-
         ECPublicKey ecpub = (ECPublicKey) publicKey;
         AbstractECPoint publicKey = ecpub.getQ();
         return ConvertUtil.byteToHex(publicKey.getEncoded());
@@ -58,5 +57,14 @@ public class ECKeyPair {
         ECPrivateKey ecpriv = (ECPrivateKey) privateKey;
         BigInteger privateKey = ecpriv.getD();
         return ConvertUtil.byteToHex(privateKey.toByteArray());
+    }
+
+    public AbstractECPoint getPointPubKey() {
+        ECPublicKey ecpub = (ECPublicKey) publicKey;
+        return ecpub.getQ();
+    }
+    public BigInteger getBIPriKey(){
+        ECPrivateKey ecpriv = (ECPrivateKey) privateKey;
+        return ecpriv.getD();
     }
 }

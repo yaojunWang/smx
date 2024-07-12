@@ -83,24 +83,25 @@ public class ConvertUtil {
         if (n == null) {
             return null;
         }
-        if (n.toByteArray().length == 33) {
+        byte[] nArray = n.toByteArray();
+        if (nArray.length == 33) {
             tmpd = new byte[32];
-            System.arraycopy(n.toByteArray(), 1, tmpd, 0, 32);
-        } else if (n.toByteArray().length == 32) {
-            tmpd = n.toByteArray();
+            System.arraycopy(nArray, 1, tmpd, 0, 32);
+        } else if (nArray.length == 32) {
+            tmpd = nArray;
         } else {
             tmpd = new byte[32];
-            for (int i = 0; i < 32 - n.toByteArray().length; i++) {
+            for (int i = 0; i < 32 - nArray.length; i++) {
                 tmpd[i] = 0;
             }
-            System.arraycopy(n.toByteArray(), 0, tmpd, 32 - n.toByteArray().length, n.toByteArray().length);
+            System.arraycopy(nArray, 0, tmpd, 32 - nArray.length, nArray.length);
         }
         return tmpd;
     }
 
     /**
      * BigInteger 转 byte[]
-     * 
+     *
      * @param length
      * @param value
      * @return

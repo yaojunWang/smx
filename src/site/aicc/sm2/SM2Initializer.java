@@ -3,12 +3,12 @@ package site.aicc.sm2;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
+import site.aicc.sm2.keygen.ECKeyPair;
+import site.aicc.sm2.keygen.ECKeyPairGenerator;
 import site.aicc.sm2.ec.AbstractECCurve;
 import site.aicc.sm2.ec.AbstractECMultiplier;
 import site.aicc.sm2.ec.AbstractECPoint;
 import site.aicc.sm2.ec.FpCurve;
-import site.aicc.sm2.keygen.ECKeyPair;
-import site.aicc.sm2.keygen.ECKeyPairGenerator;
 import site.aicc.sm2.util.ConvertUtil;
 import site.aicc.sm3.SM3;
 
@@ -131,7 +131,7 @@ public class SM2Initializer {
         p = ConvertUtil.bigIntegerTo32Bytes(gx);
         // gx
         sm3.update(p, 0, p.length);
-        p = ConvertUtil.bigIntegerTo32Bytes(gy);
+        p = ConvertUtil.bigIntegerTo32Bytes(gy) ;
         // gy
         sm3.update(p, 0, p.length);
         p = ConvertUtil.bigIntegerTo32Bytes(pA.getXCoord().toBigInteger());

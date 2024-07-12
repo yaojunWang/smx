@@ -180,8 +180,11 @@ public class SM4 {
             for (int i = 0; i < 4; i++) {
                 if (encrypt) {
                     // 加密时 CBC IV 混合
-                    X[i] = ((((input[offset] ^ cbcIV[offset % 16]) & 0xff) << 24) | (((input[++offset] ^ cbcIV[offset % 16]) & 0xff) << 16) | (((input[++offset] ^ cbcIV[offset % 16]) & 0xff) << 8)
-                            | (((input[++offset] ^ cbcIV[offset % 16]) & 0xff)));
+                    int x1 = ((input[offset] ^ cbcIV[offset % 16]) & 0xff) << 24;
+                    int x2 = ((input[++offset] ^ cbcIV[offset % 16]) & 0xff) << 16;
+                    int x3 = ((input[++offset] ^ cbcIV[offset % 16]) & 0xff) << 8;
+                    int x4 = (input[++offset] ^ cbcIV[offset % 16]) & 0xff;
+                    X[i] = x1 | x2 | x3 | x4 ;
                 } else {
                     X[i] = (((input[offset] & 0xff) << 24) | ((input[++offset] & 0xff) << 16) | ((input[++offset] & 0xff) << 8) | ((input[++offset] & 0xff)));
                 }

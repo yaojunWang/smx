@@ -4,10 +4,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
-import site.aicc.sm2.ec.DoubleAndAddMultiplier;
-import site.aicc.sm2.ec.AbstractECPoint;
 import site.aicc.sm2.keygen.ECKeyPair;
 import site.aicc.sm2.keygen.ECPrivateKey;
+import site.aicc.sm2.ec.DoubleAndAddMultiplier;
+import site.aicc.sm2.ec.AbstractECPoint;
+import site.aicc.sm2.keygen.ECPublicKey;
 import site.aicc.sm2.util.ConvertUtil;
 
 //@formatter:off
@@ -39,17 +40,25 @@ import site.aicc.sm2.util.ConvertUtil;
 public class SM2 {
     //@formatter:off
     // 方程 y^2 = x^3 + ax + b
-    /** SM2 国密算法推荐参数  
+    /* SM2 国密算法推荐参数*/
     private static final String[] params = new String[] {
             "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF", 
             "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFC",
             "28E9FA9E9D9F5E344D5A9E4BCF6509A7F39789F515AB8F92DDBCBD414D940E93", 
             "FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123",
             "32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7", 
-            "BC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0" 
+            "BC3736A2F4F6779C59BDCEE36B692153D0A9877CC62A474002DF32E52139F0A0"
     };
-    */
-    /** 国密测试参数 */
+    /*密钥交换协议测试参数
+    private static final String[] params = new String[] {
+            "8542D69E4C044F18E8B92435BF6FF7DE457283915C45517D722EDB8B08F1DFC3",//p
+            "787968B4FA32C3FD2417842E73BBFEFF2F3C848B6831D7E0EC65228B3937E498",//a
+            "63E4C6D3B23B0C849CF84241484BFE48F61D59A5B16BA06E6E12D1DA27C5249A",//b
+            "8542D69E4C044F18E8B92435BF6FF7DD297720630485628D5AE74EE7C32E79B7",//n
+            "421DEBD61B62EAB6746434EBC3CC315E32220B3BADD50BDC4C4E6C147FEDD43D",//gx
+            "0680512BCBB42C07D47349D2153B70C4E5D7FDFCBFA36EA1A85841B9E46E09A2"//gy
+    };*/
+    /* 国密测试参数
     private static final String[] params = new String[]{
           "8542D69E4C044F18E8B92435BF6FF7DE457283915C45517D722EDB8B08F1DFC3",
           "787968B4FA32C3FD2417842E73BBFEFF2F3C848B6831D7E0EC65228B3937E498",
@@ -57,8 +66,8 @@ public class SM2 {
           "8542D69E4C044F18E8B92435BF6FF7DD297720630485628D5AE74EE7C32E79B7",
           "421DEBD61B62EAB6746434EBC3CC315E32220B3BADD50BDC4C4E6C147FEDD43D",
           "0680512BCBB42C07D47349D2153B70C4E5D7FDFCBFA36EA1A85841B9E46E09A2" 
-    };
-    
+    };*/
+
     //@formatter:on
     // 国密参数构造的椭圆曲线计算器
     private static final SM2Initializer init;
@@ -86,11 +95,23 @@ public class SM2 {
         ECKeyPair key = null;
         while (true) {
             key = init.genKeyPair();
-            if (((ECPrivateKey) key.getPrivate()).getD().toByteArray().length == 32) {
+            int priLength = ((ECPrivateKey) key.getPrivate()).getD().toByteArray().length;
+            AbstractECPoint q = ((ECPublicKey) key.getPublic()).getQ();
+            int pubLength = q.getXCoord().toBigInteger().toByteArray().length + q.getYCoord().toBigInteger().toByteArray().length;
+            if (priLength == 32 && pubLength == 64) {
                 break;
             }
         }
         return key;
+    }
+
+    public static AbstractECPoint decodePoint(String publicKey){
+        return init.decodePoint(ConvertUtil.hexToByte(publicKey));
+    }
+
+
+    public static AbstractECPoint getPublicKey(BigInteger privateKey){
+        return init.getPublicKey(privateKey);
     }
 
     /**

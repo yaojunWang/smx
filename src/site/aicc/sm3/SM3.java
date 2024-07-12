@@ -1,5 +1,6 @@
 package site.aicc.sm3;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 //@formatter:off
@@ -72,6 +73,17 @@ public class SM3 {
             buffPoint = 0;
         }
         return this;
+    }
+
+    /**
+     * 输入字符串
+     *
+     * @param data
+     * @return
+     */
+    public SM3 update(String data) {
+        byte[] bytes = data.getBytes(StandardCharsets.UTF_8);
+        return this.update(bytes,0,bytes.length);
     }
 
     /**
@@ -191,7 +203,11 @@ public class SM3 {
         int offset = 0;
         // w0 ~ w15
         for (int j = 0; j < 16; j++) {
-            w[j] = (((block[offset] & 0xff) << 24) | ((block[++offset] & 0xff) << 16) | ((block[++offset] & 0xff) << 8) | ((block[++offset] & 0xff)));
+            int h1 =  (block[offset] & 0xff) << 24;
+            int h2 =  (block[++offset] & 0xff) << 16;
+            int h3 =  (block[++offset] & 0xff) << 8;
+            int h4  = (block[++offset] & 0xff);
+            w[j] = (h1 | h2 | h3 | h4);
             offset++;
         }
         // w16 ~ w67

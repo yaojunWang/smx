@@ -3,10 +3,10 @@ package site.aicc.sm2;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import site.aicc.sm2.ec.AbstractECPoint;
 import site.aicc.sm2.keygen.ECKeyPair;
 import site.aicc.sm2.keygen.ECPrivateKey;
 import site.aicc.sm2.keygen.ECPublicKey;
+import site.aicc.sm2.ec.AbstractECPoint;
 import site.aicc.sm2.util.ConvertUtil;
 import site.aicc.sm3.SM3;
 //@formatter:off
@@ -136,7 +136,7 @@ public class SM2Cipher {
                 // 国密测试参数
                 //@formatter:off
                 // k = new BigInteger("6CB28D99385C175C94F94E934817663FC176D925DD72B727260DBAAE1FB2F96F", 16);
-                // kp = factory.curve.createPoint(new BigInteger("110FCDA57615705D5E7B9324AC4B856D23E6D9188B2AE47759514657CE25D112",16), new BigInteger("1C65D68A4A08601DF24B431E0CAB4EBE084772B3817E85811A8510B2DF7ECA1A",16));
+                // kp = init.decodePoint( ConvertUtil.hexToByte("04" + "110FCDA57615705D5E7B9324AC4B856D23E6D9188B2AE47759514657CE25D112" + "1C65D68A4A08601DF24B431E0CAB4EBE084772B3817E85811A8510B2DF7ECA1A"));
                 //@formatter:on
                 r = e.add(kp.getXCoord().toBigInteger());
                 r = r.mod(init.getN());
@@ -232,14 +232,16 @@ public class SM2Cipher {
         ECPrivateKey ecpriv = (ECPrivateKey) key.getPrivate();
         ECPublicKey ecpub = (ECPublicKey) key.getPublic();
         // 6.1 A1随机数k
-        BigInteger k = ecpriv.getD();
+         BigInteger k = ecpriv.getD();
+         AbstractECPoint c1 = ecpub.getQ();
+
         // 国密测试随机数
-        // BigInteger k = new
-        // BigInteger("4C62EEFD6ECFC2B95B92FD6C3D9575148AFA17425546D49018E5388D49DD7B4F",16);
+         //BigInteger k = new BigInteger("4C62EEFD6ECFC2B95B92FD6C3D9575148AFA17425546D49018E5388D49DD7B4F",16);
         // 6.1 A2 C1 = [k]G
         // 国密测试c1计算
-        // ECPoint c1 = sm2.g.multiply(k);
-        AbstractECPoint c1 = ecpub.getQ();
+        //AbstractECPoint c1 = init.getG().multiply(k);
+
+
         // 6.1 A4
         // 密钥派生初始Z
         this.p2 = userPublicKey.multiply(k);

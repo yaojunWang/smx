@@ -2,8 +2,6 @@ package site.aicc.sm2.ec;
 
 import java.math.BigInteger;
 
-import site.aicc.sm2.ec.FpPoint;
-
 //@formatter:off
 /**
 * <ul>
