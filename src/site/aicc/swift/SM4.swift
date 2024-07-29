@@ -236,18 +236,24 @@ class Sm4Impl {
         return hexChars.joined(separator: "").lowercased()
     }
 
-    func hex2Bytes(hex: String) -> [UInt8] {
-        let chars = Array(hex)
-        var bs: [UInt8] = Array(repeating: 0, count: chars.count / 2)
-        var point = 0
-        var i = 0
-        while i < hex.count {
-            let hexVal = UInt8(String(chars[i...i+1]), radix: 16) ?? 0
-            bs[point] = limitToSignedByte(i: Int(hexVal) & 0xFF)
-            point += 1
-            i += 2
+    func hex2Bytes( hex: String) -> [Int8] {
+        var bytes = [Int8]()
+        let length = hex.count
+        if length & 1 != 0 {
+            return bytes
         }
-        return bs
+        bytes.reserveCapacity(length/2)
+        var index = hex.startIndex
+        for _ in 0..<length/2 {
+            let nextIndex = hex.index(index, offsetBy: 2)
+            if let b = UInt8(hex[index..<nextIndex], radix: 16) {
+                bytes.append(limitToSignedByte(i: Int(b)))
+            } else {
+                return bytes
+            }
+            index = nextIndex
+        }
+        return bytes
     }
 
     func bytes2Int(bytes: [UInt8]) -> UInt32 {
